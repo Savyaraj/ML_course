@@ -29,4 +29,4 @@ def learning_by_penalized_gradient(y, tx, w, gamma, lambda_):
     """
     loss, gradient = penalized_logistic_regression(y, tx, w, lambda_)
     w = w - gamma * gradient
-    return loss, w
+    return w, loss

@@ -23,5 +23,5 @@ def learning_by_gradient_descent(y, tx, w, gamma):
     loss = calculate_loss(y, tx, w)
     grad = calculate_gradient(y, tx, w)
     w = w - gamma * grad
-    return loss, w
+    return w, loss
 
