@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
 
-Ridge Regression
-"""
+#Ridge Regression
+
 
 import numpy as np
 
