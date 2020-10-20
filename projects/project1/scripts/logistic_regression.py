@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-"""implement a polynomial basis function."""
 
 import numpy as np
 
