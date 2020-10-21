@@ -46,7 +46,8 @@ def create_csv_submission(ids, y_pred, name):
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
-            
+   
+
 def standardize(x):
     """Standardize the original data set."""
     mean_x = np.mean(x, axis = 0)
@@ -55,25 +56,19 @@ def standardize(x):
     x = x / std_x
     return x, mean_x, std_x
 
+
 def correction_missing_values(tX):
     """Correction missing values by mean value of feature"""
-    # for j in range (tX.shape[1]):
-    #     tX_val = []
-    #     for i in range (tX.shape[0]):
-    #         if (tX[i, j] != -999):
-    #             tX_val.append(tX[i,j])
-    #     mean_tX_val = np.mean(tX_val)
-    #     for i in range (tX.shape[0]):
-    #         if (tX[i, j] == -999):
-    #             tX[i,j] = mean_tX_val
-    
-    #mean_tX_val = np.mean(tX[tX!=-999], 0)
-    #is_missing = tX==-999
-    #tX[is_missing] = 0 
-    #tX = tX + is_missing*(np.tile(mean_tX_val,(tX.shape[0],1)))
-
+    tX[tX==-999] = float('nan')
     col_mean_tX = np.nanmean(tX, axis=0)
     indices = np.where(np.isnan(tX))
     tX[indices] = np.take(col_mean_tX, indices[1])
+    return tX
     
+    
+def normalize(tX):
+    """Normalization data so that all values are between 0 and 1"""
+    max = np.max(tX)
+    min = np.min(tX)
+    tX = (tX - min) / (max - min)
     return tX
