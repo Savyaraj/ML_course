@@ -67,9 +67,13 @@ def correction_missing_values(tX):
     #         if (tX[i, j] == -999):
     #             tX[i,j] = mean_tX_val
     
-    mean_tX_val = np.mean(tX[tX!=-999], 0)
-    is_missing = tX==-999
-    tX[is_missing] = 0 
-    tX = tX + is_missing*(np.tile(mean_tX_val,(tX.shape[0],1)))
+    #mean_tX_val = np.mean(tX[tX!=-999], 0)
+    #is_missing = tX==-999
+    #tX[is_missing] = 0 
+    #tX = tX + is_missing*(np.tile(mean_tX_val,(tX.shape[0],1)))
 
+    col_mean_tX = np.nanmean(tX, axis=0)
+    indices = np.where(np.isnan(tX))
+    tX[indices] = np.take(col_mean_tX, indices[1])
+    
     return tX
