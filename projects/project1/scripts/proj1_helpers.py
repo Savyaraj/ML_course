@@ -57,13 +57,19 @@ def standardize(x):
 
 def correction_missing_values(tX):
     """Correction missing values by mean value of feature"""
-    for j in range (tX.shape[1]):
-        tX_val = []
-        for i in range (tX.shape[0]):
-            if (tX[i, j] != -999):
-                tX_val.append(tX[i,j])
-        mean_tX_val = np.mean(tX_val)
-        for i in range (tX.shape[0]):
-            if (tX[i, j] == -999):
-                tX[i,j] = mean_tX_val
+    # for j in range (tX.shape[1]):
+    #     tX_val = []
+    #     for i in range (tX.shape[0]):
+    #         if (tX[i, j] != -999):
+    #             tX_val.append(tX[i,j])
+    #     mean_tX_val = np.mean(tX_val)
+    #     for i in range (tX.shape[0]):
+    #         if (tX[i, j] == -999):
+    #             tX[i,j] = mean_tX_val
+    
+    mean_tX_val = np.mean(tX[tX!=-999], 0)
+    is_missing = tX==-999
+    tX[is_missing] = 0 
+    tX = tX + is_missing*(np.tile(mean_tX_val,(tX.shape[0],1)))
+
     return tX
