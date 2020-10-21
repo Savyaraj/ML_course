@@ -17,7 +17,7 @@ def calculate_gradient(y, tx, w):
 
 def penalized_logistic_regression(y, tx, w, lambda_):
     """return the loss, gradient."""
-    num_samples = y.shape[0]
+    # num_samples = y.shape[0]
     loss = calculate_loss(y, tx, w) + lambda_ * np.squeeze(np.dot(w.transpose(), w))
     gradient = calculate_gradient(y, tx, w) + 2 * lambda_ * w
     return loss, gradient
