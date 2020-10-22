@@ -72,3 +72,42 @@ def normalize(tX):
     min = np.min(tX)
     tX = (tX - min) / (max - min)
     return tX
+
+def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    poly = np.ones((x.shape[0], (degree + 1) * x.shape[1]))
+    ind = 0
+    for feature in range(0, x.shape[1]):
+        for deg in range(0, degree+1):
+            poly[:, ind] = x[:, feature] ** deg
+            ind = ind+1
+    return np.array(poly)
+                   
+                   
+def split_data(x, y, ratio, seed=1):
+    """
+    split the dataset based on the split ratio. If ratio is 0.8 
+    you will have 80% of your data set dedicated to training 
+    and the rest dedicated to testing
+    """
+    # set seed
+    np.random.seed(seed)
+    num_row = len(y)
+    indices = np.random.permutation(num_row)
+    index_split = int(np.floor(ratio * num_row))
+    index_training = indices[: index_split]
+    index_testing = indices[index_split:]
+    # create split
+    x_training = x[index_training]
+    x_testing = x[index_testing]
+    y_training = y[index_training]
+    y_testing = y[index_testing]
+    return x_training, x_testing, y_training, y_testing
+
+
+def compute_loss(y, tx, w):
+    """Calculate the loss using mse.
+    """
+    e = y - np.dot(tx, w)
+    loss_func = 1 / 2 * np.mean(e ** 2)
+    return loss_func
