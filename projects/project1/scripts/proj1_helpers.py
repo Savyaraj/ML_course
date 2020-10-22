@@ -4,7 +4,7 @@ import csv
 import numpy as np
 
 
-def load_csv_data(data_path, sub_sample=False):
+def load_csv_data(data_path, sub_sample=False, ratio=0.02, seed=7):
     """Loads data and returns y (class labels), tX (features) and ids (event ids)"""
     y = np.genfromtxt(data_path, delimiter=",", skip_header=1, dtype=str, usecols=1)
     x = np.genfromtxt(data_path, delimiter=",", skip_header=1)
@@ -17,18 +17,28 @@ def load_csv_data(data_path, sub_sample=False):
     
     # sub-sample
     if sub_sample:
-        yb = yb[::50]
-        input_data = input_data[::50]
-        ids = ids[::50]
-
+        np.random.seed(seed)
+        num_row = len(yb)
+        indices = np.random.choice(num_row, int(np.floor(ratio * num_row)))
+        yb = yb[indices]
+        input_data = input_data[indices]
+        ids = ids[indices]
+        
     return yb, input_data, ids
 
 
-def predict_labels(weights, data):
+def predict_labels(weights, data, is_LR):
     """Generates class predictions given weights, and a test data matrix"""
     y_pred = np.dot(data, weights)
-    y_pred[np.where(y_pred <= 0.5)] = 0
-    y_pred[np.where(y_pred > 0.5)] = 1
+    # The threshold should be different for least squares and logistic regression when label is {0,1}.
+    # least square: decision boundary t >< 0.5
+    # logistic regression:  decision boundary sigmoid(t) >< 0.5  <==> t >< 0
+    if is_LR:
+        y_pred[np.where(y_pred > 0.0)] = 1
+        y_pred[np.where(y_pred <= 0.0)] = 0
+    else:
+        y_pred[np.where(y_pred > 0.5)] = 1
+        y_pred[np.where(y_pred <= 0.5)] = 0
     
     return y_pred
 
@@ -46,8 +56,8 @@ def create_csv_submission(ids, y_pred, name):
         writer.writeheader()
         for r1, r2 in zip(ids, y_pred):
             writer.writerow({'Id':int(r1),'Prediction':int(r2)})
-   
 
+            
 def standardize(x):
     """Standardize the original data set."""
     mean_x = np.mean(x, axis = 0)
@@ -105,9 +115,21 @@ def split_data(x, y, ratio, seed=1):
     y_testing = y[index_testing]
     return x_training, x_testing, y_training, y_testing
 
+
 def compute_loss(y, tx, w):
     """Calculate the loss using mse.
     """
     e = y - np.dot(tx, w)
     loss_func = 1 / 2 * np.mean(e ** 2)
     return loss_func
+
+
+def build_k_indices(y, k_fold, seed):
+    """build k indices for k-fold."""
+    num_row = y.shape[0]
+    interval = int(num_row / k_fold)
+    np.random.seed(seed)
+    indices = np.random.permutation(num_row)
+    k_indices = [indices[k * interval: (k + 1) * interval]
+                 for k in range(k_fold)]
+    return np.array(k_indices)
