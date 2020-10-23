@@ -75,6 +75,14 @@ def correction_missing_values(tX):
     tX[indices] = np.take(col_mean_tX, indices[1])
     return tX
     
+def remove_outliers(tX):
+    tX_norm, mean, std = standardize(tX)
+    for i in range(tX.shape[0]):
+        for j in range(tX.shape[1]):
+            if((tX_norm[i,j])**2>9): tX_norm[i,j] = mean[j]
+
+    return tX_norm
+        
     
 def normalize(tX):
     """Normalization data so that all values are between 0 and 1"""
@@ -86,10 +94,10 @@ def normalize(tX):
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
-    poly = np.ones((x.shape[0], (degree + 1) * x.shape[1]))
+    poly = np.ones((x.shape[0], degree * x.shape[1]))
     ind = 0
     for feature in range(0, x.shape[1]):
-        for deg in range(0, degree+1):
+        for deg in range(1, degree+1):
             poly[:, ind] = x[:, feature] ** deg
             ind = ind+1
     return np.array(poly)
