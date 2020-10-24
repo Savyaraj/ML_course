@@ -68,33 +68,59 @@ def standardize(x):
 
 
 def correction_missing_values(tX):
-    """Correction missing values by mean value of feature"""
+    """Correction missing values by median of feature"""
     tX[tX==-999] = float('nan')
-    col_mean_tX = np.nanmean(tX, axis=0)
+    #col_mean_tX = np.nanmean(tX, axis=0)
+    col_median_tX = np.nanmedian(tX, axis=0)
     indices = np.where(np.isnan(tX))
-    tX[indices] = np.take(col_mean_tX, indices[1])
-    return tX
-    
-def remove_outliers(tX):
-    tX_norm, mean, std = standardize(tX)
-    for i in range(tX.shape[0]):
-        for j in range(tX.shape[1]):
-            if((tX_norm[i,j])**2>9): tX_norm[i,j] = mean[j]
+    #tX[indices] = np.take(col_mean_tX, indices[1])
+    tX[indices] = np.take(col_median_tX, indices[1])
+    return tX, col_median_tX
 
-    return tX_norm
-        
+def correction_missing_values_test(tX_test, col_median_tX):
+    """Correction missing values in testing using measurements of training set"""
+    tX_test[tX_test==-999] = float('nan')
+    indices = np.where(np.isnan(tX_test))
+    tX_test[indices] = np.take(col_median_tX, indices[1])
+    return tX_test
+
+
+def remove_outliers(tX):
+    """Removing outliers using interquartile range"""
+    perc_25 = np.percentile(tX, 25)
+    perc_75 = np.percentile(tX, 75)
+    distance = perc_75 - perc_25
+    tX[tX < perc_25 - 1.5 * distance] = float('nan')
+    tX[tX > perc_75 + 1.5 * distance] = float('nan')
+    #col_mean_tX = np.nanmean(tX, axis=0)
+    col_median_tX = np.nanmedian(tX, axis=0)
+    indices = np.where(np.isnan(tX))
+    #tX[indices] = np.take(col_mean_tX, indices[1])
+    tX[indices] = np.take(col_median_tX, indices[1])
+    return tX, perc_25, perc_75, col_median_tX
+
+
+def remove_outliers_test(tX_test, perc_25, perc_75, col_median_tX):
+    ""'"Removing outliers in testing using measurements of training set"""
+    distance = perc_75 - perc_25
+    tX_test[tX_test < perc_25 - 1.5 * distance] = float('nan')
+    tX_test[tX_test > perc_75 + 1.5 * distance] = float('nan')
+    indices = np.where(np.isnan(tX_test))
+    tX_test[indices] = np.take(col_median_tX, indices[1])
+    return tX_test
+    
     
 def normalize(tX):
     """Normalization data so that all values are between 0 and 1"""
-    max = np.max(tX)
-    min = np.min(tX)
-    tX = (tX - min) / (max - min)
-    return tX
+    max_ = np.max(tX)
+    min_ = np.min(tX)
+    tX = (tX - min_) / (max_ - min_)
+    return tX, max_, min_
 
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
-    poly = np.ones((x.shape[0], degree * x.shape[1]))
+    poly = np.ones((x.shape[0], degree  * x.shape[1]))
     ind = 0
     for feature in range(0, x.shape[1]):
         for deg in range(1, degree+1):
