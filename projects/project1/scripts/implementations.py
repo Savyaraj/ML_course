@@ -1,18 +1,22 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
+
 def compute_mse(y, tx, w):
     """Calculate the loss using mse."""
     e = y - np.dot(tx, w)
-    loss = 1 / 2 * np.mean(e ** 2)
+    loss = e.dot(e) / (2 * len(e))
     return loss
 
 
 def compute_gradient(y, tx, w):
     """Compute the gradient and the loss."""
-    # compute loss 
+    # compute loss
     loss = compute_mse(y, tx, w)
-    # compute gradient 
-    grad = -1 / (np.shape(y)[0])*np.dot((tx.T),(y - np.dot(tx, w)));
+
+    e = y - np.dot(tx, w)
+    # compute gradient
+    grad = -1/(np.shape(y)[0])*np.dot((tx.T),e)
     
     return grad, loss
 
@@ -62,7 +66,8 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 def compute_stoch_gradient(y, tx, w):
     """Compute a stochastic gradient from just few examples n and their corresponding y_n labels."""
-    stoch_grad = -1/(np.shape(y)[0])*np.dot((tx.T),(y - np.dot(tx,w)))
+    e = y - np.dot(tx,w)
+    stoch_grad = -1/(np.shape(y)[0])*np.dot((tx.T),e)
     return stoch_grad
 
 
@@ -74,6 +79,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
         for minibatch_y, minibatch_tx in batch_iter(y, tx, 1):
             grad = compute_stoch_gradient(minibatch_y,minibatch_tx,w)
         
+        #computing the loss
         loss = compute_mse(y, tx, w)
         #updating the w
         w = w - gamma * grad
@@ -84,7 +90,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
 
 
 def least_squares(y, tx):
-    """calculate the least squares."""
+    """calculate the least squares solution."""
     # returns mse and optimal weights
     w = np.dot(np.linalg.inv(np.dot(tx.T,tx)),np.dot(tx.T,y))
 
@@ -100,8 +106,8 @@ def least_squares(y, tx):
 def ridge_regression(y, tx, lambda_):
     """implement ridge regression."""
     # The optimum w
-    w =  np.dot(np.linalg.inv(np.dot(tx.T,tx)+ (lambda_*2*np.shape(y)[0])*np.identity(np.shape(tx)[1])),np.dot(tx.T,y))
-    # loss (mse)
+    w =  np.dot(np.linalg.inv(np.dot(tx.T,tx) + (lambda_*2*np.shape(y)[0])*np.identity(np.shape(tx)[1])),np.dot(tx.T,y))
+    # loss
     loss = compute_mse(y, tx, w) + lambda_*(np.inner(w,w))
     return w, loss
 
@@ -145,7 +151,7 @@ def calculate_gradient_reg_logistic_regression(y, tx, w, lambda_):
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
     w = initial_w
     for n_iter in range(max_iters):
-        loss, grad = calculate_gradient_reg_logistic_regression(y, tx, w)
+        loss, grad = calculate_gradient_reg_logistic_regression(y, tx, w, lambda_)
         w = w - gamma * grad
         
     return w, loss
