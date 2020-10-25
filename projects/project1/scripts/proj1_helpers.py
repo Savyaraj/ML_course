@@ -2,6 +2,7 @@
 """some helper functions for project 1."""
 import csv
 import numpy as np
+import matplotlib.pyplot as plt
 
 
 def load_csv_data(data_path, sub_sample=False, ratio=0.02, seed=7):
@@ -101,7 +102,7 @@ def remove_outliers(tX):
 
 
 def remove_outliers_test(tX_test, perc_25, perc_75, col_median_tX):
-    ""'"Removing outliers in testing using measurements of training set"""
+    """Removing outliers in testing using measurements of training set"""
     distance = perc_75 - perc_25
     tX_test[tX_test < perc_25 - 1.5 * distance] = float('nan')
     tX_test[tX_test > perc_75 + 1.5 * distance] = float('nan')
@@ -167,3 +168,15 @@ def build_k_indices(y, k_fold, seed):
     k_indices = [indices[k * interval: (k + 1) * interval]
                  for k in range(k_fold)]
     return np.array(k_indices)
+
+
+def cross_validation_visualization(parameter, x_label, mse_tr, mse_te):
+    """visualization the curves of mse_tr and mse_te."""
+    plt.semilogx(parameter, mse_tr, marker=".", color='b', label='train error')
+    plt.semilogx(parameter, mse_te, marker=".", color='r', label='test error')
+    plt.xlabel(x_label)
+    plt.ylabel("rmse")
+    plt.title("cross validation")
+    plt.legend(loc=2)
+    plt.grid(True)
+    plt.savefig(x_label)
