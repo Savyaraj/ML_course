@@ -23,4 +23,6 @@ def gradient_descent(y, tx, initial_w, max_iters, gamma):
         
         # update w by gradient
         w = w-gamma*grad;
-    return w,loss
+
+    # grad_temp, loss_new = compute_gradient(y,tx,w)
+    return w,loss_new
