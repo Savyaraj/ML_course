@@ -16,7 +16,7 @@ y = the column vector of labels,<br />
 tx = matrix of features,<br />
 max_iters = maximum number of iterations,<br />
 gamma = step size, <br />
-initial_w = initial weight vectors,<br />
+initial_w = initial weight vector,<br />
 lambda_ = regularisation parameter,<br />
 
 Each of the above functions outputs the loss and the best weight vector it found by the iteration.
