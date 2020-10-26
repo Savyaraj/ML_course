@@ -17,8 +17,8 @@ tx = matrix of features,<br />
 max_iters = maximum number of iterations,<br />
 gamma = step size, <br />
 initial_w = initial weight vector,<br />
-lambda_ = regularisation parameter,<br />
+lambda_ = regularisation parameter.<br />
 
-Each of the above functions outputs the loss and the best weight vector it found by the iteration.
+Each of the above functions outputs the best weight vector, it found by the iteration, and the loss.
 ***
-The main file **run.py** when run through the command line outputs the best set of weight vectors evaluated and the corresponding accuracy on the local test set. The script also returns the "csv" file which contains the predictions on the test data-set. It contains implementations for the cross-validations, splitting the dataset and also training the ridge regression implemented in implementations.py. The code to determine the best polynomial degree and best lambda selection for ridge regression have been commented as their run time is high. If the user wants to verify the degree and the lambda value, he/she can uncomment the code and run it.
+The main file **run.py** when run through the command line outputs the best set of weight vectors evaluated, loss on local train set, loss om local testing set and the corresponding accuracy on the local test set. The script also returns the "csv" file which contains the predictions on the test data-set. It contains implementations for the cross-validations, splitting the dataset and also training the ridge regression implemented in implementations.py. The code to determine the best polynomial degree and best lambda selection for ridge regression have been commented as their run time is high. If the user wants to verify the degree and the lambda value, he/she can uncomment the code and run it.
