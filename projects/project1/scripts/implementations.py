@@ -96,7 +96,6 @@ def least_squares(y, tx):
 
     #Mean squared error
     loss = compute_mse(y, tx, w)
-    # ***************************************************
     return w, loss
 
 
