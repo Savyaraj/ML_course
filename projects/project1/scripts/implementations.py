@@ -103,7 +103,7 @@ def least_squares(y, tx):
 
 
 def ridge_regression(y, tx, lambda_):
-    """implement ridge regression."""
+    """calculate the ridge regression solution."""
     # The optimum w
     w =  np.dot(np.linalg.inv(np.dot(tx.T,tx) + (lambda_*2*np.shape(y)[0])*np.identity(np.shape(tx)[1])),np.dot(tx.T,y))
     # loss
@@ -128,6 +128,7 @@ def calculate_gradient(y, tx, w):
     return np.dot(tx.transpose(), sigm - y)
 
 def logistic_regression(y, tx, initial_w, max_iters, gamma):
+    """Logistic regression algorithm."""
     w = initial_w
     
     for n_iter in range(max_iters):
@@ -148,6 +149,7 @@ def calculate_gradient_reg_logistic_regression(y, tx, w, lambda_):
     return loss, grad
 
 def reg_logistic_regression(y, tx, lambda_, initial_w, max_iters, gamma):
+    """Regularized logistic regression algorithm."""
     w = initial_w
     for n_iter in range(max_iters):
         loss, grad = calculate_gradient_reg_logistic_regression(y, tx, w, lambda_)
